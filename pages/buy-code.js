@@ -7,9 +7,6 @@ import Layout from "../components/Layout";
 const CODE_PRICE = 5500;
 const WA = "+2348136347797";
 
-/**
- * Simple purchase logo — replace with an <img src="/payments/brand-logo.png" /> if you have one.
- */
 function PurchaseLogo({ size = 34 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden role="img">
@@ -33,21 +30,18 @@ export default function BuyCode() {
   const nameInputRef = useRef(null);
   const buyButtonRef = useRef(null);
 
-  // normalize helper (used inside modal if needed)
   const normalizePhone = (v) => {
     let x = String(v || "").replace(/\s+/g, "");
     if (x.startsWith("+234")) x = "0" + x.slice(4);
     return x.replace(/[^0-9]/g, "").slice(0, 11);
   };
 
-  // Clicking Buy Now always opens the modal (no card-level validation)
   const handleBuyClick = (e) => {
     e.preventDefault();
     setShowModal(true);
     buyButtonRef.current = e.currentTarget;
   };
 
-  // focus-trap + body-scroll lock for modal
   useEffect(() => {
     if (!showModal) {
       if (buyButtonRef.current) buyButtonRef.current.focus();
@@ -103,7 +97,6 @@ export default function BuyCode() {
       alert("Please enter your phone number");
       return;
     }
-    // normalize phone before sending
     const normalized = normalizePhone(phone);
     setProcessing(true);
     setTimeout(() => {
@@ -119,20 +112,24 @@ export default function BuyCode() {
       <style>{`
         :root{ --gw-gold:#d4af37; --gw-muted:#94a3b8; --gw-surface:#0f1724; }
 
-        .wrap { max-width:960px; margin:26px auto; padding:22px; }
+        /* layout */
+        .wrap { max-width:960px; margin:26px auto; padding:22px; box-sizing:border-box; }
         .hero { text-align:center; margin-bottom:12px; }
         .hero h1{ margin:0; font-size:22px; color:var(--gw-gold); font-weight:800 }
         .hero p{ margin-top:8px; color:var(--gw-muted); font-size:13px }
 
-        .payment-grid { display:flex; justify-content:center; gap:12px; margin-top:10px }
-        .card { width: 380px; border-radius:12px; overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); box-shadow: 0 8px 28px rgba(2,6,23,0.12); }
+        /* payment grid: allow wrapping so cards don't overflow on small screens */
+        .payment-grid { display:flex; justify-content:center; gap:12px; margin-top:10px; flex-wrap:wrap; padding:0 8px; box-sizing:border-box; }
+
+        /* card: responsive by default - full width up to a max-width */
+        .card { width:100%; max-width:380px; border-radius:12px; overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); box-shadow: 0 8px 28px rgba(2,6,23,0.12); box-sizing:border-box; margin:0 auto; }
 
         .card-top { padding:14px 16px; display:flex; align-items:center; gap:12px; justify-content:flex-start }
-        .brand { display:flex; align-items:center; gap:10px }
+        .brand { display:flex; align-items:center; gap:10px; flex-direction:column; align-items:flex-start; }
         .brand .title { font-weight:800; color: #e6e7ea; font-size:15px }
-        .logo-wrap { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); box-shadow: 0 8px 18px rgba(0,0,0,0.12); }
+        .logo-wrap { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); box-shadow: 0 8px 18px rgba(0,0,0,0.12); flex-shrink:0; }
 
-        .card-body { padding:14px; background:var(--gw-surface); display:flex; flex-direction:column; gap:10px; }
+        .card-body { padding:14px; background:var(--gw-surface); display:flex; flex-direction:column; gap:10px; box-sizing:border-box; }
 
         .note { color:var(--gw-muted); font-size:13px }
 
@@ -141,22 +138,30 @@ export default function BuyCode() {
         .amount .value { font-weight:900; color:var(--gw-gold); font-size:16px }
 
         .actions { display:flex; gap:10px; margin-top:6px }
-        .btn { flex:1; padding:10px 12px; border-radius:999px; font-weight:800; cursor:pointer; border:0; font-size:13px }
+        .btn { flex:1; padding:10px 12px; border-radius:999px; font-weight:800; cursor:pointer; border:0; font-size:13px; box-sizing:border-box; }
         .btn.primary { background: linear-gradient(90deg, var(--gw-gold), #efd78d); color:#071224; box-shadow:0 10px 28px rgba(212,175,55,0.08) }
         .btn.flat { background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--gw-muted) }
 
         /* overlay modal styles */
-        .overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:80; }
+        .overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:80; padding:20px; box-sizing:border-box; }
         .overlay .backdrop { position:absolute; inset:0; background:rgba(2,6,23,0.56); backdrop-filter: blur(6px); }
 
-        .modal { position:relative; z-index:90; width:420px; max-width:92%; border-radius:12px; padding:18px; background: linear-gradient(180deg, #0b1220, #071224); box-shadow: 0 20px 60px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.04); color:#fff }
+        .modal { position:relative; z-index:90; width:420px; max-width:92%; border-radius:12px; padding:18px; background: linear-gradient(180deg, #0b1220, #071224); box-shadow: 0 20px 60px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.04); color:#fff; box-sizing:border-box; }
         .modal h3{ margin:0 0 8px 0; font-size:16px }
         .modal p{ margin:0 0 12px 0; color:rgba(255,255,255,0.85); font-size:13px }
         .modal .field { width:100%; margin-bottom:10px }
-        .modal .field input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color:inherit }
+        .modal .field input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color:inherit; box-sizing:border-box; }
         .modal .proceed { margin-top:8px; display:flex; gap:8px }
 
-        @media (max-width:460px){ .card{ width: 92%; } }
+        /* small screens: ensure comfortable spacing and full width */
+        @media (max-width:460px){
+          .wrap { padding:14px; }
+          .card { width:100%; max-width:100%; border-radius:10px; }
+          .card-top { padding:12px; }
+          .card-body { padding:12px; }
+          .actions { flex-direction:column-reverse; gap:8px; }
+          .btn { width:100%; }
+        }
       `}</style>
 
       <div className="wrap">
@@ -179,7 +184,6 @@ export default function BuyCode() {
             <div className="card-top">
               <div className="logo-wrap" aria-hidden>
                 <PurchaseLogo />
-                {/* or replace with <img src="/payments/brand-logo.png" alt="Payment" /> */}
               </div>
 
               <div className="brand">
@@ -197,7 +201,6 @@ export default function BuyCode() {
               </div>
 
               <div className="actions">
-                {/* Always allow Buy Now to open the modal (no card-level input required) */}
                 <button
                   className="btn primary"
                   onClick={handleBuyClick}
@@ -221,7 +224,6 @@ export default function BuyCode() {
           </a>
         </div>
 
-        {/* Modal (confirm name + phone) */}
         <AnimatePresence>
           {showModal && (
             <motion.div className="overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
