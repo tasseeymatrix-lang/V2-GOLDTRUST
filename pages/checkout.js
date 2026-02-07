@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import { saveTx } from '../utils/storage';
 
-const CODE_PRICE = 5500;
+const CODE_PRICE = 7000;
 const WA = '+2348136347797';
 
 export default function Checkout() {
